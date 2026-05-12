@@ -48,7 +48,9 @@ def baixar_audio(url):
         "audio.mp3",
         "audio.webm",
         "audio.m4a",
-        "audio.webm.part"
+        "audio.mp4",
+        "audio.webm.part",
+        "cookies.txt"
     ]
 
     for arquivo in arquivos:
@@ -57,6 +59,13 @@ def baixar_audio(url):
                 os.remove(arquivo)
             except:
                 pass
+
+    # cria cookies.txt pela variável do Railway
+    cookies = os.getenv("YOUTUBE_COOKIES")
+
+    if cookies:
+        with open("cookies.txt", "w", encoding="utf-8") as f:
+            f.write(cookies)
 
     opcoes = {
         'format': 'bestaudio[ext=m4a]/bestaudio/best',
@@ -92,10 +101,11 @@ def baixar_audio(url):
 
 
 # =========================
-# 🎧 TRANSCRIÇÃO (WHISPER SAFE)
+# 🎧 TRANSCRIÇÃO
 # =========================
 def transcrever():
     global status
+
     status = "🎧 Transcrevendo..."
 
     try:
@@ -104,6 +114,7 @@ def transcrever():
         raise Exception("Whisper não instalado. Rode: pip install openai-whisper")
 
     model = whisper.load_model("tiny")
+
     result = model.transcribe("audio.mp3")
 
     return result["text"]
@@ -114,25 +125,35 @@ def transcrever():
 # =========================
 def gerar_resumo(texto):
     global status
+
     status = "🧠 Gerando resumo..."
 
     for i, key in enumerate(api_keys):
+
         try:
             if not key:
                 continue
 
+            print(f"🔄 Tentando API {i+1}")
+
             genai.configure(api_key=key)
+
             model = genai.GenerativeModel("gemini-2.5-flash")
 
             response = model.generate_content(prompt + texto)
 
+            print(f"✅ API {i+1} funcionando")
+
             return response.text
 
         except Exception as e:
+
             erro = str(e)
-            print(f"API {i+1} falhou: {erro}")
+
+            print(f"❌ API {i+1} falhou: {erro}")
 
             time.sleep(1)
+
             continue
 
     raise Exception("Todas as APIs falharam")
@@ -143,25 +164,30 @@ def gerar_resumo(texto):
 # =========================
 def gerar_doc(url, resumo):
     global status
+
     status = "📄 Gerando documento..."
 
     nome_docx = "relatorio.docx"
 
     doc = Document()
 
-    titulo = doc.add_heading("Relatório do Vídeo", 0)
+    titulo = doc.add_heading("📊 Relatório do Vídeo", 0)
     titulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     doc.add_paragraph(url)
 
-    doc.add_heading("Resumo", 1)
+    doc.add_heading("🧠 Resumo", 1)
 
     for linha in resumo.split("\n"):
+
         if linha.strip():
+
             p = doc.add_paragraph(linha)
 
             if linha.startswith("#"):
+
                 run = p.runs[0]
+
                 run.bold = True
                 run.font.size = Pt(14)
 
@@ -180,18 +206,25 @@ def processar(url):
         status = "🚀 Iniciando..."
 
         baixar_audio(url)
+
         texto = transcrever()
+
         resumo = gerar_resumo(texto)
+
         arquivo = gerar_doc(url, resumo)
 
         resultado_final = resumo
+
         status = "✅ Finalizado"
 
         return arquivo
 
     except Exception as e:
+
         print("ERRO:", e)
+
         status = "❌ Erro no processamento"
+
         return None
 
 
@@ -199,11 +232,17 @@ def processar(url):
 # 🚀 THREAD
 # =========================
 def iniciar_processamento(url):
+
     if not url:
         return "URL inválida"
 
-    thread = threading.Thread(target=processar, args=(url,))
+    thread = threading.Thread(
+        target=processar,
+        args=(url,)
+    )
+
     thread.daemon = True
+
     thread.start()
 
     return "Processo iniciado"
