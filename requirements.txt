@@ -3,4 +3,6 @@ whisper
 yt-dlp
 google-generativeai
 python-dotenv
+python-docx
 docx2pdf
+gunicorn
