@@ -1,8 +1,7 @@
 flask
 yt-dlp
+openai-whisper
 google-generativeai
 python-dotenv
 python-docx
-docx2pdf
 gunicorn
-openai-whisper
