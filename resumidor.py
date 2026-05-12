@@ -40,13 +40,47 @@ Texto:
 # =========================
 def baixar_audio(url):
     global status
+
     status = "🔄 Baixando áudio..."
 
+    # remove arquivos antigos
+    arquivos = [
+        "audio.mp3",
+        "audio.webm",
+        "audio.m4a",
+        "audio.webm.part"
+    ]
+
+    for arquivo in arquivos:
+        if os.path.exists(arquivo):
+            try:
+                os.remove(arquivo)
+            except:
+                pass
+
     opcoes = {
-        'format': 'bestaudio/best',
-        'outtmpl': 'audio.mp3',
+        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        'outtmpl': 'audio.%(ext)s',
         'noplaylist': True,
-        'quiet': True,
+        'quiet': False,
+        'no_warnings': True,
+
+        # cookies youtube
+        'cookiefile': 'cookies.txt',
+
+        # evita bloqueio do youtube
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android']
+            }
+        },
+
+        # headers fake browser
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0'
+        },
+
+        # ffmpeg
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
