@@ -5,3 +5,4 @@ python-dotenv
 python-docx
 docx2pdf
 gunicorn
+openai-whisper
