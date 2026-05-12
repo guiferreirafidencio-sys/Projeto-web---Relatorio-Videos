@@ -1,0 +1,6 @@
+flask
+whisper
+yt-dlp
+google-generativeai
+python-dotenv
+docx2pdf
