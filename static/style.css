@@ -1,0 +1,220 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100dvh; 
+    background: linear-gradient(270deg, #0f172a, #1e293b, #312e81, #0f172a);
+    background-size: 600% 600%;
+    animation: gradientMove 12s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    overflow-x: hidden; 
+    overflow-y: auto;   
+    position: relative;
+}
+
+/* animação do gradiente */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99,102,241,0.4), transparent 70%);
+    top: -150px;
+    left: -150px;
+    filter: blur(120px);
+    z-index: -1;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(236,72,153,0.3), transparent 70%);
+    bottom: -150px;
+    right: -150px;
+    filter: blur(120px);
+    z-index: -1;
+}
+
+body span {
+    position: fixed; 
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    animation: float 10s linear infinite;
+    z-index: -1;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    100% {
+        transform: translateY(-10vh);
+        opacity: 0;
+    }
+}
+
+.container {
+    width: 90%; /* Garante que ocupe uma boa parte da tela */
+    max-width: 500px; /* Mas não passe de 500px no PC */
+    perspective: 1000px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 40px 30px; /* Aumentei o padding padrão */
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    animation: fadeIn 0.8s ease;
+    position: relative;
+    z-index: 1;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease;
+}
+
+/* brilho interno que se move */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255,255,255,0.15),
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none; 
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: #cbd5f5;
+    margin-bottom: 25px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input {
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background: #6366f1;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
+button:hover {
+    background: #4f46e5;
+    transform: scale(1.03);
+}
+
+#status {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #facc15;
+}
+
+#resultado {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #f87171;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   REGRAS DE RESPONSIVIDADE (MOBILE AUMENTADO)
+   ========================================= */
+@media (max-width: 768px) {
+    .container {
+        width: 95%; /* Ocupa 95% da largura da tela no celular */
+    }
+
+    .card {
+        padding: 50px 20px; /* Deixa o card bem alto na tela */
+        border-radius: 25px;
+    }
+
+    h1 {
+        font-size: 32px; /* Título bem maior */
+    }
+
+    .subtitle {
+        font-size: 16px; /* Subtítulo mais legível */
+        margin-bottom: 35px; /* Mais espaço antes de digitar */
+    }
+
+    input {
+        padding: 18px; /* Caixa de texto mais gorda */
+        font-size: 16px; 
+    }
+    
+    button {
+        padding: 18px; /* Botão mais gordo */
+        font-size: 18px; /* Letra do botão maior */
+    }
+
+    form {
+        gap: 20px; /* Mais espaço entre o input e o botão */
+    }
+}

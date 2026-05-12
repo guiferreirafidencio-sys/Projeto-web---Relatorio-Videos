@@ -1,0 +1,5 @@
+.env
+__pycache__/
+audio.mp3
+*.pdf
+*.docx

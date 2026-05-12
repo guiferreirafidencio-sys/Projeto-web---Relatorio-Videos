@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumir Vídeo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>🎬 Resumidor de Vídeos</h1>
+        <p class="subtitle">Cole o link de um vídeo e receba um resumo automático</p>
+
+        <form id="form">
+            <input name="video" type="url" placeholder="https://youtube.com/..." required>
+            <button type="submit">Gerar Resumo</button>
+        </form>
+
+        <p id="status"></p>
+        <div id="resultado"></div>
+    </div>
+</div>
+
+<script>
+let intervalo;
+
+document.getElementById("form").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    document.getElementById("status").innerText = "⏳ Iniciando...";
+    document.getElementById("resultado").innerText = "";
+
+    if (intervalo) clearInterval(intervalo);
+
+    fetch("/iniciar", {
+        method: "POST",
+        body: formData
+    });
+
+    intervalo = setInterval(() => {
+        fetch("/status")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("status").innerText = data.status;
+
+                if (data.status === "✅ Finalizado") {
+                    clearInterval(intervalo);
+                    window.location.href = "/download_page";
+                }
+
+                if (data.status && data.status.startsWith("❌")) {
+                    document.getElementById("resultado").innerText = data.status;
+                    clearInterval(intervalo);
+                }
+            });
+    }, 2000);
+});
+</script>
+<script>
+const card = document.querySelector(".card");
+const form = document.querySelector("form");
+
+let dentro = false;
+
+card.addEventListener("mouseenter", () => {
+    dentro = true;
+});
+
+card.addEventListener("mouseleave", () => {
+    dentro = false;
+    card.style.transform = "rotateX(0) rotateY(0)";
+});
+
+/* efeito 3D */
+card.addEventListener("mousemove", (e) => {
+    if (!dentro) return;
+
+    /* 👇 SE estiver no formulário, NÃO aplica efeito */
+    if (e.target.closest("form")) {
+        card.style.transform = "rotateX(0) rotateY(0)";
+        return;
+    }
+
+    const rect = card.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = -(y - centerY) / 20;
+    const rotateY = (x - centerX) / 20;
+
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+
+    card.style.setProperty("--mx", `${(x / rect.width) * 100}%`);
+    card.style.setProperty("--my", `${(y / rect.height) * 100}%`);
+});
+</script>
+</body>
+</html>

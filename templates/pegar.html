@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='pegar.css') }}">
+
+    <title>Relatório</title>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h1>📄 Seu relatório está pronto</h1>
+
+        <!-- PREVIEW PC -->
+        <div class="preview desktop-preview">
+
+            <iframe 
+                src="/preview#toolbar=1&navpanes=0"
+                loading="lazy">
+            </iframe>
+
+        </div>
+
+        <!-- MOBILE -->
+        <a href="/preview" target="_blank" class="mobile-preview-btn">
+            📄 Abrir relatório
+        </a>
+
+        <!-- DOWNLOAD -->
+        <a href="/download" class="download-link">
+
+            <button>
+                ⬇ Baixar arquivo
+            </button>
+
+        </a>
+
+    </div>
+
+</body>
+</html>
