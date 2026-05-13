@@ -69,7 +69,7 @@ def baixar_audio(url):
 
     opcoes = {
         # 🔥 áudio mais leve
-        'format': 'bestaudio[abr<=64]',
+        'format': 'bestaudio/best',
 
         'outtmpl': 'audio.%(ext)s',
         'noplaylist': True,
