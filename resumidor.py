@@ -68,7 +68,9 @@ def baixar_audio(url):
             f.write(cookies)
 
     opcoes = {
-        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        # 🔥 áudio mais leve
+        'format': 'bestaudio[abr<=64]',
+
         'outtmpl': 'audio.%(ext)s',
         'noplaylist': True,
         'quiet': False,
@@ -94,6 +96,11 @@ def baixar_audio(url):
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
         }],
+
+        # 🔥 reduz qualidade para acelerar whisper
+        'postprocessor_args': [
+            '-ar', '16000'
+        ],
     }
 
     with yt_dlp.YoutubeDL(opcoes) as ydl:
@@ -115,7 +122,12 @@ def transcrever():
 
     model = whisper.load_model("tiny")
 
-    result = model.transcribe("audio.mp3")
+    # 🔥 otimizado
+    result = model.transcribe(
+        "audio.mp3",
+        fp16=False,
+        language="pt"
+    )
 
     return result["text"]
 
